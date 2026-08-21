@@ -1,0 +1,23 @@
+{
+  "name": "@enterprise/ops-agent",
+  "version": "1.0.0",
+  "description": "Production non-engineering agentic workflows for HR operations, FinOps invoice reconciliation, and human-in-the-loop governance.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^3.24.2",
+    "dotenv": "^16.4.7"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.0",
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0"
+  }
+}
