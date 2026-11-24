@@ -1,7 +1,7 @@
 [
   {
     "id": "EOA-001",
-    "status": "TODO",
+    "status": "DONE",
     "priority": 1,
     "title": "Implement HMAC-SHA256 Signature Verification for Slack HITL Callbacks",
     "description": "Ensure incoming Slack interaction webhooks verify request headers against a shared secret using HMAC-SHA256 before processing approve/reject decisions.",

@@ -17,6 +17,15 @@ export class HitlGate {
   private static pendingActions: Map<string, PendingAction> = new Map();
   public static AUTO_APPROVE_FINANCIAL_THRESHOLD_USD = 500.0;
 
+  private static tokensMatch(expected: string, provided: string): boolean {
+    const a = Buffer.from(expected, 'utf8');
+    const b = Buffer.from(provided, 'utf8');
+    if (a.length !== b.length) {
+      return false;
+    }
+    return crypto.timingSafeEqual(a, b);
+  }
+
   /**
    * Request execution of an action. Auto-approves low-risk actions; holds high-risk for HITL.
    */
@@ -84,7 +93,7 @@ export class HitlGate {
       return false;
     }
 
-    if (pending.approvalToken !== token) {
+    if (!this.tokensMatch(pending.approvalToken, token)) {
       return false;
     }
 
@@ -96,6 +105,33 @@ export class HitlGate {
       action: `${pending.actionType}_AUTHORIZED`,
       payload: pending.payload,
       approvalStatus: 'APPROVED',
+      authorizedBy: reviewerEmail
+    });
+
+    return true;
+  }
+
+  /**
+   * Reject a pending action using the cryptographic token
+   */
+  public static reject(actionId: string, token: string, reviewerEmail: string): boolean {
+    const pending = this.pendingActions.get(actionId);
+    if (!pending || pending.status !== 'PENDING') {
+      return false;
+    }
+
+    if (!this.tokensMatch(pending.approvalToken, token)) {
+      return false;
+    }
+
+    pending.status = 'REJECTED';
+
+    AuditLogger.logAction({
+      workflow: pending.workflow,
+      actor: 'ai-ops-agent',
+      action: `${pending.actionType}_REJECTED`,
+      payload: pending.payload,
+      approvalStatus: 'REJECTED',
       authorizedBy: reviewerEmail
     });
 

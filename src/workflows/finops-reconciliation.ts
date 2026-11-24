@@ -36,7 +36,9 @@ export class FinOpsReconciliationAgent {
     } else {
       if (invoice.totalAmountUsd > purchaseOrder.remainingBudgetUsd) {
         varianceUsd = invoice.totalAmountUsd - purchaseOrder.remainingBudgetUsd;
-        variancePercentage = Number(((varianceUsd / purchaseOrder.remainingBudgetUsd) * 100).toFixed(2));
+        variancePercentage = purchaseOrder.remainingBudgetUsd > 0
+          ? Number(((varianceUsd / purchaseOrder.remainingBudgetUsd) * 100).toFixed(2))
+          : 100;
         anomalies.push(`Invoice total ($${invoice.totalAmountUsd}) exceeds remaining PO budget ($${purchaseOrder.remainingBudgetUsd}) by $${varianceUsd}.`);
         status = 'BUDGET_EXCEEDED';
       }
